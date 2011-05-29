@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="wrap_content" android:baselineAligned="false" android:layout_width="fill_parent" android:orientation="vertical">
+    <TextView android:id="@+id/textView3" android:layout_marginTop="15px" android:layout_height="wrap_content" android:layout_width="fill_parent" android:text="Username" android:textSize="15px"></TextView>
+    <EditText android:id="@+id/editText3" android:layout_marginTop="5px" android:layout_width="fill_parent" android:layout_height="wrap_content" android:text="android"></EditText>    
+    <TextView android:id="@+id/textView1" android:layout_marginTop="15px" android:layout_height="wrap_content" android:layout_width="fill_parent" android:text="Network name (Essid)" android:textSize="15px"></TextView>
+    <EditText android:id="@+id/editText1" android:layout_marginTop="5px" android:layout_width="fill_parent" android:layout_height="wrap_content" android:text="hrushi"></EditText>
+    <TextView android:id="@+id/textView2" android:layout_marginTop="15px" android:layout_height="wrap_content" android:layout_width="fill_parent" android:text="WiFi Channel (Select from 1 to 14)" android:textSize="15px"></TextView>
+    <EditText android:id="@+id/editText2" android:layout_marginTop="5px" android:layout_width="fill_parent" android:layout_height="wrap_content" android:text="1"></EditText>
+    <TextView android:id="@+id/textView4" android:layout_marginTop="15px" android:layout_height="wrap_content" android:layout_width="fill_parent" android:text="IPv4 Address" android:textSize="15px"></TextView>
+    <EditText android:id="@+id/editText4" android:layout_marginTop="5px" android:layout_width="fill_parent" android:layout_height="wrap_content" android:text="192.168.0.16"></EditText>
+	<Button android:id="@+id/button1" android:layout_height="wrap_content" android:layout_width="wrap_content" android:text="Save" android:textSize="15px" android:layout_marginTop="20px" android:layout_gravity="center"></Button>    
+</LinearLayout>
+<!--     
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_height="wrap_content" android:baselineAligned="false" android:layout_width="fill_parent" android:orientation="horizontal">
+<Button android:id="@+id/button1" android:layout_height="wrap_content" android:layout_width="fill_parent" android:text="Settings" android:textSize="20px" android:layout_marginTop="10px" android:layout_gravity="center"></Button>
+</LinearLayout>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="wrap_content" android:baselineAligned="false" android:layout_width="fill_parent" android:orientation="horizontal">    
+    <CheckBox android:text="  WiFi" android:textStyle="bold" android:layout_height="wrap_content" android:id="@+id/checkBox1" android:layout_width="fill_parent" android:layout_weight="1" android:layout_marginTop="10px" android:textSize="20px"></CheckBox>
+    <CheckBox android:text="  LifeNet" android:textStyle="bold" android:layout_height="wrap_content" android:id="@+id/checkBox2" android:layout_width="fill_parent" android:layout_weight="1" android:layout_gravity="center" android:layout_marginTop="5px" android:textSize="20px"></CheckBox>
+</LinearLayout>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="wrap_content" android:baselineAligned="false" android:layout_width="fill_parent" android:orientation="horizontal">
+    <TextView android:text=" Users Online" android:id="@+id/textView1" android:layout_marginTop="15px" android:layout_height="wrap_content" android:layout_width="fill_parent"></TextView>    
+</LinearLayout>
+
+ -->

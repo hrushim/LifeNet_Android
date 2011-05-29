@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="wrap_content" android:baselineAligned="false" android:layout_width="fill_parent" android:orientation="vertical">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_height="wrap_content" android:baselineAligned="false" android:layout_width="fill_parent" android:orientation="horizontal">
+<Button android:id="@+id/button1" android:layout_height="wrap_content" android:layout_width="fill_parent" android:text="Settings" android:textSize="20px" android:layout_marginTop="10px" android:layout_gravity="center"></Button>
+</LinearLayout>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="wrap_content" android:baselineAligned="false" android:layout_width="fill_parent" android:orientation="horizontal">    
+    <CheckBox android:text="  WiFi" android:textStyle="bold" android:layout_height="wrap_content" android:id="@+id/checkBox1" android:layout_width="fill_parent" android:layout_weight="1" android:layout_marginTop="10px" android:textSize="20px"></CheckBox>
+    <CheckBox android:text="  LifeNet" android:textStyle="bold" android:layout_height="wrap_content" android:id="@+id/checkBox2" android:layout_width="fill_parent" android:layout_weight="1" android:layout_gravity="center" android:layout_marginTop="5px" android:textSize="20px"></CheckBox>
+</LinearLayout>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="wrap_content" android:baselineAligned="false" android:layout_width="fill_parent" android:orientation="horizontal">
+    <TextView android:text=" Users Online" android:id="@+id/textView1" android:layout_marginTop="15px" android:layout_height="wrap_content" android:layout_width="fill_parent"></TextView>    
+</LinearLayout>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_height="wrap_content" android:baselineAligned="false" android:layout_width="fill_parent" android:orientation="horizontal">
+<ListView android:id="@+id/ListView1" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+</LinearLayout>
+
+</LinearLayout>

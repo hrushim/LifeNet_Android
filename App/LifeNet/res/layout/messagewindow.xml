@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_height="wrap_content" android:baselineAligned="false" android:layout_width="fill_parent" android:orientation="vertical">
+<Button android:id="@+id/buttonSend" android:layout_weight="1" android:layout_height="wrap_content" android:layout_width="fill_parent" android:text="Send" android:textSize="20px" android:layout_marginTop="10px" android:layout_gravity="center"></Button>
+<TextView android:text="Type message" android:layout_weight="1" android:id="@+id/textView1" android:layout_marginTop="15px" android:layout_height="wrap_content" android:layout_width="fill_parent"></TextView>
+<EditText android:id="@+id/editTextSend" android:singleLine="false" android:layout_marginTop="5px" android:layout_width="fill_parent" android:text="" android:gravity="top" android:layout_height="320dip"></EditText>
+</LinearLayout>
