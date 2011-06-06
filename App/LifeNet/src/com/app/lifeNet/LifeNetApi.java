@@ -4,6 +4,10 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 
+/**
+ *
+ * @author hrushi
+ */
 public class LifeNetApi {
 
 	static String hostsFile;
@@ -142,5 +146,56 @@ public class LifeNetApi {
 		}
 		return "";
 	}
+	
+	public static String getMyIp() {
 
+		if (initFlag) {
+
+			try {
+				BufferedReader in = new BufferedReader(
+						new FileReader(hostsFile));
+				String str;
+
+				while ((str = in.readLine()) != null) {
+					String[] strArr = str.split(" ");
+					if (strArr[7].trim().equals(strArr[10].trim())) {
+						in.close();
+						return strArr[5].trim();
+					}
+				}
+				in.close();
+			} catch (IOException e) {
+
+			}
+
+		}
+		return "";
+	}
+
+	public static String getIpFromName(String name) {
+
+		if (initFlag) {
+
+			try {
+				BufferedReader in = new BufferedReader(
+						new FileReader(hostsFile));
+				String str;
+
+				while ((str = in.readLine()) != null) {
+					String[] strArr = str.split(" ");
+					if (strArr[3].trim().equals(name)) {
+						in.close();
+						return strArr[5].trim();
+					}
+				}
+				in.close();
+			} catch (IOException e) {
+
+			}
+
+		}
+		return "";
+	}
+
+	
 }

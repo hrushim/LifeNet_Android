@@ -21,32 +21,44 @@ import android.provider.Settings.SettingNotFoundException;
 import android.provider.Settings.System;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class LifeNet extends Activity implements Runnable {
 
+	public static int MSG_TYPE_DATA = 1;
+	public static int MSG_TYPE_ACK = 2;
+	public static int MSG_SRC_DATA_PORT = 30000;
+	public static int MSG_SRC_ACK_PORT = 30001;
+	public static int MSG_RCV_TIMEOUT = 100;
+	public static int THREAD_CNTRL_INTERVAL = 50;
+	public static long SEQ_CNT = 0; // Used for sequencing data packets
+	public static int MAX_NUM_OF_RX_MSGS = 255;
+    public static int MSG_START_REP_CNT = 50;
+    public static int MSG_REP_CNT = 5;
+	public static String selectedUserName; // Not sure
 	static String HOSTS_FILE_NAME = "/sdcard/hosts.txt";
 	static String GNST_FILE_NAME = "/sdcard/gnst.txt";
 	static String MANIFOLD_FILE_NAME = "/proc/txstats";
-
+	boolean RUN_FLAG = false;
 	Vector<String> strVector;
 	Timer refreshTimer;
 	WifiManager globalWifiManager;
 	WifiLock globalWifiLock;
 	ListView lv1;
+	TextView msgsView;
+	TextView inboxView;
 	ArrayAdapter<String> adp;
 	File manifoldFile;
 	Button but;
 	Thread updateThread;
+	MessageThread messTh;
 	LifeNet thisPtr;
 	boolean wifiStaticStatus;
 	boolean tempLoadFlag;
@@ -55,10 +67,6 @@ public class LifeNet extends Activity implements Runnable {
 	String wifiDns2;
 	String wifiGwIp;
 	String wifiNetmask;
-	
-	public static int listenPort = 4440;
-	public static int seqNum;
-	public static String selectedUserName;
 	public static String setUserName;
 	public static String setWifiChannel;
 	public static String setNetworkName;
@@ -88,6 +96,11 @@ public class LifeNet extends Activity implements Runnable {
 		but = (Button) findViewById(R.id.button1);
 		but.setOnClickListener(settingsClickListener);
 
+		msgsView = (TextView) findViewById(R.id.textView2);
+		msgsView.setOnClickListener(msgsClickListener);
+		inboxView = (TextView) findViewById(R.id.textView3);
+		inboxView.setOnClickListener(inboxClickListener);
+		
 		CheckBox cBoxWiFi = (CheckBox) findViewById(R.id.checkBox1);
 		cBoxWiFi.setChecked(checkWifi());
 
@@ -98,18 +111,22 @@ public class LifeNet extends Activity implements Runnable {
 		cBoxLifeNet.setOnClickListener(lifeNetClickListener);
 
 		lv1 = (ListView) findViewById(R.id.ListView1);
-		lv1.setOnItemClickListener(listClickListener);		
+		lv1.setOnItemClickListener(listClickListener);
 		adp = new ArrayAdapter<String>(this,
 				android.R.layout.simple_list_item_1);
 		lv1.setAdapter(adp);
 		adp.add("Nobody");
 		lv1.setOnItemClickListener(listClickListener);
-		
+
 		updateAliveContacts();
-		// updateAliveContacts();
 
 		updateThread = new Thread(this);
 		updateThread.start();
+		setRunning(true);
+
+		messTh = new MessageThread(this, THREAD_CNTRL_INTERVAL);
+		messTh.setRunning(true);
+		messTh.start();
 
 	}
 
@@ -150,10 +167,12 @@ public class LifeNet extends Activity implements Runnable {
 		}
 	}
 
-	private Handler handler = new Handler() {
+	public Handler handler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
 
+			ChatMessage chatMsg = null;
+			
 			CheckBox cBoxWiFi = (CheckBox) findViewById(R.id.checkBox1);
 			cBoxWiFi.setChecked(checkWifi());
 
@@ -162,22 +181,74 @@ public class LifeNet extends Activity implements Runnable {
 
 			updateAliveContacts();
 
+			TextView tv = (TextView) findViewById(R.id.textView2);
+
+			if (MessageQueue.newMsgReadFlag == true) {
+				for (int i = 0; i < MessageQueue.unreadCount; i++) {
+			
+					chatMsg = (ChatMessage) MessageQueue.unreadMessageVector.elementAt(i);
+					ChatMessage chatMsgNew = new ChatMessage(chatMsg.srcName, chatMsg.seq, chatMsg.payload.length(),  chatMsg.payload, chatMsg.type);
+					chatMsgNew.rxTime = chatMsg.rxTime;
+					MessageQueue.readMessageVector.add(chatMsgNew);
+					MessageQueue.readCount++;
+					
+				}
+				MessageQueue.unreadCount = 0;
+				MessageQueue.newMsgReadFlag = false;
+				MessageQueue.unreadMessageVector.clear();
+			}
+
+			if (MessageQueue.unreadCount > 0) {
+
+				if (MessageQueue.unreadCount == 1) {
+					tv.setText("1 Unread Message");
+				} else {
+					tv.setText(MessageQueue.unreadCount + " Unread Messages");
+				}
+			} else {
+				tv.setText("No new messages");
+			}
+			
+			inboxView.setText("Inbox(" + MessageQueue.readCount + ")");
+		}
+
+	};
+
+	private View.OnClickListener inboxClickListener = new View.OnClickListener() {
+
+		@Override
+		public void onClick(View v) {
+			// TODO Auto-generated method stub
+			Intent newIntent = new Intent(thisPtr, InboxWindow.class);
+			thisPtr.startActivity(newIntent);
 		}
 	};
+
 	
+	private View.OnClickListener msgsClickListener = new View.OnClickListener() {
+
+		@Override
+		public void onClick(View v) {
+			// TODO Auto-generated method stub
+			Intent newIntent = new Intent(thisPtr, InboxView.class);
+			thisPtr.startActivity(newIntent);
+		}
+	};
+
 	private OnItemClickListener listClickListener = new OnItemClickListener() {
 
 		@Override
 		public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 				long arg3) {
 			// TODO Auto-generated method stub
-			//Toast.makeText(getApplicationContext(), adp.getItem(arg2), Toast.LENGTH_SHORT).show();
+			// Toast.makeText(getApplicationContext(), adp.getItem(arg2),
+			// Toast.LENGTH_SHORT).show();
 			selectedUserName = adp.getItem(arg2);
 			Intent newIntent = new Intent(thisPtr, MessageWindow.class);
 			thisPtr.startActivity(newIntent);
 		}
 	};
-	
+
 	private View.OnClickListener settingsClickListener = new OnClickListener() {
 
 		@Override
@@ -212,7 +283,8 @@ public class LifeNet extends Activity implements Runnable {
 					updateAliveContacts();
 				} else {
 					Toast.makeText(getApplicationContext(),
-							"Enable wifi before starting LifeNet", Toast.LENGTH_SHORT).show();
+							"Enable wifi before starting LifeNet",
+							Toast.LENGTH_SHORT).show();
 				}
 
 			} else {
@@ -367,7 +439,10 @@ public class LifeNet extends Activity implements Runnable {
 					adp.add(strArr[3]
 							+ "    [(ED = "
 							+ LifeNetApi.getED(LifeNetApi.getMyName(),
-									strArr[3]) + "), (" + LifeNetApi.getNumTxNumRx(LifeNetApi.getMyName(), strArr[3]) + ")]");
+									strArr[3])
+							+ "), ("
+							+ LifeNetApi.getNumTxNumRx(LifeNetApi.getMyName(),
+									strArr[3]) + ")]");
 				}
 				sb.append(" ");
 			}
@@ -409,4 +484,12 @@ public class LifeNet extends Activity implements Runnable {
 			handler.sendEmptyMessage(0);
 		}
 	}
+	
+    public void setRunning(boolean flag) {
+    	RUN_FLAG = flag;
+    }
+
+    public boolean isRunning() {
+    	return RUN_FLAG;
+    }
 }

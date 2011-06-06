@@ -2,6 +2,7 @@ package com.app.lifeNet;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -29,9 +30,20 @@ public class MessageWindow extends Activity{
 			EditText editText = (EditText)findViewById(R.id.editTextSend);
 			Toast.makeText(getApplicationContext(), editText.getText(), Toast.LENGTH_SHORT).show();
 			
-			ChatMessage msg = new ChatMessage(LifeNetApi.getMyName(), LifeNet.selectedUserName, LifeNet.seqNum, editText.getText().length(), editText.getText().toString(), 1);
+			String[] strArr = LifeNet.selectedUserName.split(" ");
+
+			if(LifeNet.SEQ_CNT == 0)
+			{
+				ChatMessage msg = new ChatMessage(LifeNetApi.getMyName(), 0, 4, "TEST", LifeNet.MSG_TYPE_DATA);
+				UdpTx.send(LifeNetApi.getIpFromName(strArr[0]), msg, LifeNet.MSG_START_REP_CNT);
+				LifeNet.SEQ_CNT++;
+				
+			}
 			
-			UdpTx.send("192.168.0.255", LifeNet.listenPort, msg);
+			ChatMessage msg = new ChatMessage(LifeNetApi.getMyName(), LifeNet.SEQ_CNT, editText.getText().length(), editText.getText().toString(), LifeNet.MSG_TYPE_DATA);
+			UdpTx.send(LifeNetApi.getIpFromName(strArr[0]), msg, LifeNet.MSG_REP_CNT);
+			LifeNet.SEQ_CNT++;
+			
 		}
 	};
 	
